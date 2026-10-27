@@ -1,0 +1,1492 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Manish Kumar R — Senior Cloud & DevOps Engineer</title>
+
+<!-- Fonts + Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<!-- GSAP Core + Plugins (ScrollTrigger & Draggable) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
+
+<!-- EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3.2.0/dist/email.min.js"></script>
+
+<style>
+  :root {
+    --bg: #04040e;
+    --bg-secondary: #08091a;
+    --glass: rgba(255, 255, 255, 0.04);
+    --glass-hover: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.08);
+    --radius: 18px;
+    --neon-1: #00f0ff;
+    --neon-2: #ff00ff;
+    --neon-3: #7000ff;
+    --text: #eaf2ff;
+    --muted: rgba(234, 242, 255, 0.65);
+    --accent: linear-gradient(135deg, var(--neon-1), var(--neon-2));
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background .35s, color .35s;
+    cursor: none; /* Custom physics cursor enabled */
+  }
+
+  @media (pointer: coarse) {
+    body { cursor: auto; }
+    .cursor-dot, .cursor-ring { display: none !important; }
+  }
+
+  /* ── CUSTOM DUAL PHYSICS CURSOR ── */
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 99999;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--neon-1);
+    box-shadow: 0 0 12px var(--neon-1);
+  }
+  .cursor-ring {
+    width: 38px; height: 38px;
+    border: 1.5px solid rgba(0, 240, 255, 0.5);
+    background: rgba(0, 240, 255, 0.03);
+    transition: width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 800; letter-spacing: 1px; color: var(--neon-1);
+    text-transform: uppercase;
+  }
+  .cursor-ring.is-hovering {
+    width: 64px; height: 64px;
+    border-color: var(--neon-2);
+    background: rgba(255, 0, 255, 0.08);
+  }
+  .cursor-ring.is-dragging {
+    width: 54px; height: 54px;
+    border-color: var(--neon-1);
+    background: rgba(0, 240, 255, 0.18);
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+
+  /* ── INTERACTIVE PARTICLE CANVAS ── */
+  #physicsCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.65;
+  }
+
+  .wrap { position: relative; z-index: 2; min-height: 100vh; }
+
+  /* ── NAVIGATION ── */
+  nav {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    z-index: 9999;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(8, 9, 26, 0.72);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 95vw;
+  }
+  .nav-btn {
+    border-radius: 999px;
+    padding: 8px 14px;
+    transition: background 0.25s, box-shadow 0.25s;
+    display: inline-block;
+  }
+  .nav-btn a {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+  }
+  .nav-btn.active {
+    background: linear-gradient(90deg, rgba(0, 240, 255, 0.18), rgba(255, 0, 255, 0.18));
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  }
+  .toggle {
+    cursor: pointer;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--glass);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  /* ── PRELOADER ── */
+  .preloader {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    gap: 18px; z-index: 12000;
+    background: radial-gradient(circle at center, #0a0b20, #03030a);
+  }
+  .preloader .logo {
+    font-weight: 900; letter-spacing: 3px; font-size: 32px;
+    background: var(--accent); -webkit-background-clip: text; color: transparent;
+  }
+  .progress-wrap { width: 280px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0; background: var(--accent); box-shadow: 0 0 15px var(--neon-1); }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 120px 6% 60px;
+  }
+  iframe.spline {
+    position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1;
+    opacity: 0.75; pointer-events: auto;
+  }
+  .hero-content {
+    position: relative; z-index: 6; max-width: 1240px; width: 100%;
+    display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center;
+    pointer-events: none;
+  }
+  .hero-left, .hero-right { pointer-events: auto; }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 999px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: var(--neon-1); font-size: 12px; font-weight: 700;
+    margin-bottom: 18px; letter-spacing: 0.8px; text-transform: uppercase;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #00ff88; box-shadow: 0 0 10px #00ff88;
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.55; }
+  }
+  .intro {
+    font-weight: 900;
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1.05;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  .intro span {
+    background: var(--accent);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: clamp(15px, 1.5vw, 18px);
+    font-weight: 400;
+    line-height: 1.65;
+    margin-bottom: 28px;
+    max-width: 600px;
+  }
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    padding: 14px 26px; border-radius: 14px; font-weight: 700; font-size: 14px;
+    cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary {
+    background: var(--accent); color: #050711;
+    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.28);
+  }
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    color: var(--text);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ── INTERACTIVE DRAGGABLE CLOUD SANDBOX (HERO RIGHT) ── */
+  .sandbox-card {
+    background: rgba(8, 10, 28, 0.68);
+    border: 1px solid rgba(0, 240, 255, 0.22);
+    border-radius: 22px;
+    padding: 20px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+    position: relative;
+    height: 390px;
+    overflow: hidden;
+  }
+  .sandbox-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-bottom: 12px; border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted);
+  }
+  .sandbox-dots { display: flex; gap: 6px; }
+  .sandbox-dots span { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .sandbox-stage {
+    position: relative; width: 100%; height: calc(100% - 36px);
+  }
+  .sandbox-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;
+  }
+  .cloud-node {
+    position: absolute; z-index: 3;
+    padding: 10px 14px; border-radius: 12px;
+    background: rgba(16, 20, 48, 0.9);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    color: var(--text); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    cursor: grab; user-select: none;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+    white-space: nowrap;
+  }
+  .cloud-node:active { cursor: grabbing; border-color: var(--neon-2); }
+  .cloud-node i { color: var(--neon-1); font-size: 15px; }
+
+  /* Glowing ambient orbs */
+  .orb { position: absolute; border-radius: 50%; filter: blur(55px); opacity: 0.45; z-index: 2; pointer-events: none; }
+  .orb.orb-1 { width: 420px; height: 420px; left: -120px; top: -60px; background: radial-gradient(circle, var(--neon-1), transparent 60%); }
+  .orb.orb-2 { width: 380px; height: 380px; right: -80px; bottom: -100px; background: radial-gradient(circle, var(--neon-2), transparent 60%); }
+
+  /* ── SECTIONS & HEADINGS ── */
+  section { padding: 96px 6%; position: relative; }
+  .section-title { max-width: 1200px; margin: 0 auto 44px; }
+  .section-title .eyebrow {
+    color: var(--neon-1); font-size: 12px; letter-spacing: 2.5px;
+    font-weight: 800; text-transform: uppercase; display: inline-block; margin-bottom: 8px;
+  }
+  .section-title h2 { font-size: clamp(28px, 4vw, 42px); margin: 0 0 12px; font-weight: 800; }
+  .section-title p { color: var(--muted); max-width: 720px; margin: 0; line-height: 1.65; }
+
+  /* ── 3D TILT CARD GLARE SYSTEM ── */
+  .tilt-card {
+    position: relative;
+    transform-style: preserve-3d;
+    will-change: transform;
+    overflow: hidden;
+  }
+  .tilt-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      420px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(0, 240, 255, 0.14),
+      rgba(255, 0, 255, 0.05) 40%,
+      transparent 80%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1;
+  }
+  .tilt-card:hover .tilt-glare { opacity: 1; }
+  .tilt-card > *:not(.tilt-glare) { position: relative; z-index: 2; }
+
+  /* ── ABOUT SECTION ── */
+  .about-wrap {
+    display: grid; grid-template-columns: 330px 1fr; gap: 44px;
+    align-items: start; max-width: 1200px; margin: 0 auto;
+  }
+  .profile {
+    border-radius: 22px; overflow: hidden;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    padding: 20px; text-align: center;
+    backdrop-filter: blur(12px);
+  }
+  .profile img {
+    width: 100%; height: 320px; object-fit: cover; display: block;
+    border-radius: 14px; border: 1px solid var(--border);
+  }
+  .social-row { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+  .social-row a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    color: var(--text); text-decoration: none; font-size: 17px;
+    transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;
+  }
+  .social-row a:hover {
+    border-color: var(--neon-1); color: var(--neon-1);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+  }
+  .about-info h3 { font-size: 28px; margin: 0 0 10px; }
+  .about-info p { color: var(--muted); margin-bottom: 20px; line-height: 1.7; font-size: 15.5px; }
+  .meta-list {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px; padding: 18px; border-radius: 16px;
+    background: var(--glass); border: 1px solid var(--border);
+    margin-bottom: 22px; font-size: 14px; color: var(--muted);
+  }
+  .meta-list strong { color: var(--text); }
+  .meta-list a { color: var(--neon-1); text-decoration: none; }
+
+  .skills { display: flex; flex-wrap: wrap; gap: 9px; }
+  .skill-pill {
+    background: rgba(255,255,255,0.03);
+    padding: 8px 14px; border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text); font-weight: 600; font-size: 13px;
+    transition: all 0.25s;
+    cursor: default;
+  }
+  .skill-pill:hover {
+    border-color: var(--neon-1);
+    background: rgba(0, 240, 255, 0.1);
+    transform: translateY(-3px);
+  }
+
+  /* ── DEVOPS STACK GRID ── */
+  .devops-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
+  }
+  .devops-card {
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+    border: 1px solid var(--border); border-radius: 18px; padding: 26px;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .devops-card:hover {
+    border-color: rgba(0, 240, 255, 0.4);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+  }
+  .devops-icon { font-size: 30px; margin-bottom: 14px; }
+  .devops-card h3 { margin: 0 0 8px; font-size: 20px; }
+  .devops-card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+  .tech-tags span {
+    font-size: 11.5px; font-family: 'JetBrains Mono', monospace;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    background: rgba(0, 240, 255, 0.05);
+    padding: 5px 10px; border-radius: 999px; color: var(--text);
+  }
+
+  /* ── IMPACT METRICS ── */
+  .impact-strip {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
+  }
+  .impact {
+    padding: 28px 20px; text-align: center;
+    border: 1px solid var(--border); border-radius: 18px;
+    background: var(--glass); backdrop-filter: blur(10px);
+  }
+  .impact strong {
+    display: block; font-size: clamp(30px, 3.5vw, 42px); font-weight: 900;
+    background: var(--accent); -webkit-background-clip: text; color: transparent;
+    margin-bottom: 6px;
+  }
+  .impact span { font-size: 13px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── EXPERIENCE TIMELINE & CARDS ── */
+  .experience-timeline {
+    position: relative; max-width: 1100px; margin: 0 auto 40px; padding: 10px 0 10px 36px;
+  }
+  .experience-timeline::before {
+    content: ""; position: absolute; left: 9px; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(180deg, var(--neon-1), var(--neon-2)); opacity: .65;
+  }
+  .timeline-item { position: relative; margin-bottom: 28px; }
+  .timeline-dot {
+    position: absolute; left: -34px; top: 28px; width: 16px; height: 16px;
+    border-radius: 50%; background: var(--accent);
+    box-shadow: 0 0 20px rgba(0,240,255,.6); border: 3px solid var(--bg);
+  }
+  .timeline-card {
+    background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border: 1px solid var(--border); border-radius: 20px; padding: 30px;
+    backdrop-filter: blur(12px);
+  }
+  .timeline-date { color: var(--neon-1); font-size: 13px; font-weight: 800; letter-spacing: .5px; margin-bottom: 8px; }
+  .timeline-card h3 { margin: 0 0 4px; font-size: 23px; }
+  .timeline-card h4 { margin: 0 0 16px; color: var(--muted); font-size: 15px; font-weight: 600; }
+  .timeline-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .timeline-tags span {
+    padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border);
+    color: var(--text); font-size: 11.5px; background: rgba(255,255,255,.03);
+  }
+  .experience-subtitle {
+    margin-top: 18px; margin-bottom: 8px; font-weight: 700; font-size: 15.5px; color: var(--text);
+  }
+  .timeline-card ul { margin: 0; padding-left: 20px; color: var(--muted); line-height: 1.7; font-size: 14px; }
+  .timeline-card li { margin-bottom: 6px; }
+
+  .exp-grid-secondary {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 20px;
+  }
+  .exp-card {
+    background: var(--glass); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px; transition: border-color .25s;
+  }
+  .exp-card:hover { border-color: rgba(0,240,255,0.35); }
+  .exp-card h4 { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+  .exp-date { font-size: 12.5px; color: var(--neon-1); margin-bottom: 12px; font-weight: 700; }
+  .exp-card ul { color: var(--muted); font-size: 13.5px; line-height: 1.7; padding-left: 18px; margin: 0; }
+
+  /* ── KEY ACHIEVEMENTS ── */
+  .achievement-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+  }
+  .achievement-card {
+    background: var(--glass); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px 26px; text-align: center;
+    backdrop-filter: blur(12px);
+  }
+  .achievement-icon {
+    width: 68px; height: 68px; margin: 0 auto 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; background: var(--accent); color: #050711;
+    box-shadow: 0 10px 25px rgba(0, 240, 255, 0.25);
+  }
+  .achievement-card h3 { margin: 0 0 12px; font-size: 21px; }
+  .achievement-card p { color: var(--muted); line-height: 1.75; font-size: 14.5px; margin: 0; }
+
+  /* ── DRAGGABLE TRACKS (PROJECTS & CERTIFICATIONS) ── */
+  .drag-header-row {
+    max-width: 1100px; margin: 0 auto 24px;
+    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;
+  }
+  .drag-hint {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.25);
+    font-size: 12px; font-weight: 700; color: var(--neon-1);
+  }
+  .drag-viewport {
+    width: 100%; max-width: 1200px; margin: 0 auto;
+    overflow: hidden; position: relative;
+    padding: 14px 4px 28px;
+    cursor: grab;
+  }
+  .drag-viewport:active { cursor: grabbing; }
+  .drag-track {
+    display: flex; gap: 22px; width: max-content;
+    user-select: none;
+  }
+  .showcase-card {
+    width: 250px; flex-shrink: 0;
+    border-radius: 18px; padding: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s, box-shadow 0.3s;
+    display: flex; flex-direction: column;
+  }
+  .showcase-card:hover {
+    border-color: rgba(0, 240, 255, 0.45);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  }
+  .showcase-card img {
+    width: 100%; height: 210px; object-fit: cover;
+    border-radius: 12px; pointer-events: none;
+    background: #0d1025;
+  }
+  .showcase-card .card-title { font-weight: 700; font-size: 16px; margin-top: 14px; }
+  .showcase-card .card-meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .showcase-card .zoom-btn {
+    margin-top: 12px; align-self: flex-start;
+    padding: 6px 12px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    color: var(--neon-1); font-size: 12px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ── CONTACT SECTION ── */
+  .contact-wrap {
+    max-width: 680px; margin: 0 auto;
+    padding: 36px; border-radius: 22px;
+    background: var(--glass); border: 1px solid var(--border);
+    backdrop-filter: blur(14px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .input {
+    padding: 14px 16px; border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.25); color: var(--text);
+    font-family: inherit; font-size: 14.5px; outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .input:focus {
+    border-color: var(--neon-1);
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.18);
+  }
+  .send-btn {
+    padding: 14px 24px; border-radius: 12px; border: none;
+    background: var(--accent); color: #050711;
+    font-weight: 800; cursor: pointer; font-size: 14px;
+  }
+
+  /* ── LIGHTBOX ── */
+  .lightbox {
+    position: fixed; inset: 0; display: none;
+    align-items: center; justify-content: center;
+    background: rgba(2, 3, 10, 0.85); backdrop-filter: blur(12px);
+    z-index: 20000; padding: 24px;
+  }
+  .lightbox img {
+    max-width: 90%; max-height: 85vh; border-radius: 14px;
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  }
+
+  footer {
+    padding: 44px 6%; text-align: center;
+    color: var(--muted); font-size: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 960px) {
+    .hero-content { grid-template-columns: 1fr; }
+    .about-wrap { grid-template-columns: 1fr; }
+    .profile { max-width: 360px; margin: 0 auto; width: 100%; }
+    .impact-strip { grid-template-columns: repeat(2, 1fr); }
+    .exp-grid-secondary { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Physics Cursor Elements -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Interactive Background Particle & Node Network Canvas -->
+<canvas id="physicsCanvas"></canvas>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader" aria-hidden="false">
+  <div class="logo">MANISH KUMAR R</div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+
+<div class="wrap" id="wrap">
+
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="nav-btn magnetic"><a href="#about">About</a></div>
+    <div class="nav-btn magnetic"><a href="#stack">Stack</a></div>
+    <div class="nav-btn magnetic"><a href="#impact">Impact</a></div>
+    <div class="nav-btn magnetic"><a href="#experience">Experience</a></div>
+    <div class="nav-btn magnetic"><a href="#achievements">Achievements</a></div>
+    <div class="nav-btn magnetic"><a href="#Design">Projects</a></div>
+    <div class="nav-btn magnetic"><a href="#cert">Certifications</a></div>
+    <div class="nav-btn magnetic"><a href="#contact">Contact</a></div>
+    <div class="toggle magnetic" id="themeToggle" title="Toggle theme">
+      <span id="themeIcon">🌗</span>
+      <span id="themeLabel" style="font-weight:600;">Dark</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero" id="home">
+    <iframe class="spline" src="https://my.spline.design/orb-WJJLRQLUDMdwoXsST4jT67gj/" allow="fullscreen" title="3D Spline Background"></iframe>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Cloud & Middleware Infrastructure
+        </div>
+        <div class="intro">Hi, I'm <span>Manish Kumar R</span></div>
+        <div class="subtitle">
+          Senior Cloud & DevOps Engineer | AWS | Kubernetes | Terraform | JBoss EAP & Middleware | Building Resilient, Automated Cloud Platforms.
+        </div>
+        <div class="cta-row">
+          <button class="btn btn-primary magnetic" id="downloadResume">
+            <i class="fas fa-download"></i> Download Resume
+          </button>
+          <button class="btn btn-ghost magnetic" onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
+            <i class="fas fa-paper-plane"></i> Contact Me
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Draggable Architecture Sandbox -->
+      <div class="hero-right">
+        <div class="sandbox-card tilt-card">
+          <div class="sandbox-header">
+            <div class="sandbox-dots">
+              <span style="background:#ff5f56"></span>
+              <span style="background:#ffbd2e"></span>
+              <span style="background:#27c93f"></span>
+            </div>
+            <span>aws-eks-topology.tf — Drag Nodes!</span>
+          </div>
+          <div class="sandbox-stage" id="sandboxStage">
+            <svg class="sandbox-svg" id="sandboxSvg"></svg>
+            <div class="cloud-node" id="node-alb" style="left: 18px; top: 30px;"><i class="fas fa-network-wired"></i> AWS ALB / API GW</div>
+            <div class="cloud-node" id="node-eks" style="left: 175px; top: 115px;"><i class="fas fa-cubes"></i> Amazon EKSCluster</div>
+            <div class="cloud-node" id="node-jboss" style="left: 20px; top: 195px;"><i class="fas fa-server"></i> JBoss EAP 8.0</div>
+            <div class="cloud-node" id="node-rds" style="left: 210px; top: 245px;"><i class="fas fa-database"></i> Amazon RDS Multi-AZ</div>
+            <div class="cloud-node" id="node-argo" style="left: 225px; top: 25px;"><i class="fas fa-sync-alt"></i> Argo CD + Helm</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-title">
+      <div class="eyebrow">Profile</div>
+      <h2>About Me</h2>
+    </div>
+    <div class="about-wrap">
+      <div class="profile tilt-card">
+        <img src="image/Manish_coat.png" alt="Manish Kumar R" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80'">
+        <div style="margin-top:14px;">
+          <div style="font-weight:800; font-size:18px;">Manish Kumar R</div>
+          <div style="color:var(--muted); font-size:13px; margin-top:4px;">Senior Cloud & DevOps Engineer</div>
+        </div>
+        <div class="social-row">
+          <a class="magnetic" href="https://www.linkedin.com/in/manish-kumar-r-a834261b6/" target="_blank" rel="noopener" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a class="magnetic" href="https://www.behance.net/manishkumar324" target="_blank" rel="noopener" title="Behance"><i class="fab fa-behance"></i></a>
+          <a class="magnetic" href="https://github.com/" target="_blank" rel="noopener" title="GitHub"><i class="fab fa-github"></i></a>
+          <a class="magnetic" href="https://drive.google.com/drive/folders/1S6Y3Jna8-oWzcncy6T9Pl92ReXuF9Bzz" target="_blank" rel="noopener" title="Google Drive"><i class="fab fa-google-drive"></i></a>
+        </div>
+      </div>
+
+      <div class="about-info">
+        <h3>Building High-Availability Cloud & Middleware Ecosystems</h3>
+        <p>
+          Senior Cloud & DevOps Engineer with 4.5+ years of experience in AWS infrastructure, Kubernetes (EKS), enterprise middleware (JBoss EAP / Apache Tomcat), CI/CD pipelines, and Infrastructure as Code—delivering scalable, secure, and resilient production solutions.
+        </p>
+
+        <div class="meta-list">
+          <div><strong>Name:</strong> Manish Kumar R</div>
+          <div><strong>Birthday:</strong> 13-Nov-1998</div>
+          <div><strong>Degree:</strong> BE - Mechanical Engineering</div>
+          <div><strong>Experience:</strong> 4.5+ Years</div>
+          <div><strong>Phone:</strong> +91 8300660217</div>
+          <div><strong>Email:</strong> <a href="mailto:mani.can1311@gmail.com">mani.can1311@gmail.com</a></div>
+        </div>
+
+        <div class="skills">
+          <div class="skill-pill">Amazon EC2</div>
+          <div class="skill-pill">AWS Cloud</div>
+          <div class="skill-pill">AWS Lambda</div>
+          <div class="skill-pill">IAM</div>
+          <div class="skill-pill">S3</div>
+          <div class="skill-pill">RDS</div>
+          <div class="skill-pill">Auto Scaling</div>
+          <div class="skill-pill">NACLs & Security Groups</div>
+          <div class="skill-pill">VPC</div>
+          <div class="skill-pill">CloudFormation</div>
+          <div class="skill-pill">CloudFront</div>
+          <div class="skill-pill">CloudWatch</div>
+          <div class="skill-pill">DynamoDB</div>
+          <div class="skill-pill">CI/CD</div>
+          <div class="skill-pill">Docker</div>
+          <div class="skill-pill">ALB / ELB</div>
+          <div class="skill-pill">JBoss EAP 7.4 / 8.0</div>
+          <div class="skill-pill">GitHub Actions</div>
+          <div class="skill-pill">Grafana</div>
+          <div class="skill-pill">Terraform (IaC)</div>
+          <div class="skill-pill">Jenkins</div>
+          <div class="skill-pill">Kubernetes (EKS)</div>
+          <div class="skill-pill">Helm Charts</div>
+          <div class="skill-pill">Ansible</div>
+          <div class="skill-pill">Nagios</div>
+          <div class="skill-pill">OpenStack</div>
+          <div class="skill-pill">Prometheus</div>
+          <div class="skill-pill">Python & Bash</div>
+          <div class="skill-pill">Splunk / ELK</div>
+          <div class="skill-pill">Argo CD</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVOPS STACK -->
+  <section id="stack">
+    <div class="section-title">
+      <div class="eyebrow">DevOps Stack</div>
+      <h2>Cloud, Automation & Reliability</h2>
+      <p>A practical engineering stack spanning AWS infrastructure, CI/CD, containers, Infrastructure as Code, and full-stack observability.</p>
+    </div>
+    <div class="devops-grid">
+      <article class="devops-card tilt-card">
+        <div class="devops-icon">☁️</div>
+        <h3>AWS Cloud</h3>
+        <p>Scalable, fault-tolerant, and secure cloud architectures across multi-AZ environments.</p>
+        <div class="tech-tags"><span>EC2</span><span>S3</span><span>IAM</span><span>VPC</span><span>RDS</span><span>Lambda</span><span>CloudWatch</span></div>
+      </article>
+      <article class="devops-card tilt-card">
+        <div class="devops-icon">☸️</div>
+        <h3>Kubernetes</h3>
+        <p>Production container orchestration, auto-scaling, and fine-grained security controls.</p>
+        <div class="tech-tags"><span>EKS</span><span>RBAC</span><span>HPA</span><span>VPA</span><span>Helm</span><span>Secrets</span></div>
+      </article>
+      <article class="devops-card tilt-card">
+        <div class="devops-icon">🚀</div>
+        <h3>CI/CD & GitOps</h3>
+        <p>Automated zero-downtime delivery pipelines from Git commits to production clusters.</p>
+        <div class="tech-tags"><span>Jenkins</span><span>GitHub</span><span>Docker</span><span>Argo CD</span><span>Helm</span></div>
+      </article>
+      <article class="devops-card tilt-card">
+        <div class="devops-icon">🏗️</div>
+        <h3>Infrastructure as Code</h3>
+        <p>Repeatable, version-controlled provisioning and configuration management.</p>
+        <div class="tech-tags"><span>Terraform</span><span>Ansible</span><span>CloudFormation</span><span>Python</span></div>
+      </article>
+      <article class="devops-card tilt-card">
+        <div class="devops-icon">📊</div>
+        <h3>Observability</h3>
+        <p>Proactive metrics, centralized log aggregation, and SLA-driven incident response.</p>
+        <div class="tech-tags"><span>Prometheus</span><span>Grafana</span><span>CloudWatch</span><span>Splunk</span><span>ELK</span></div>
+      </article>
+      <article class="devops-card tilt-card">
+        <div class="devops-icon">🐧</div>
+        <h3>Linux & Middleware</h3>
+        <p>Enterprise RHEL administration, JBoss EAP clustering, and Bash/Python automation.</p>
+        <div class="tech-tags"><span>RHEL</span><span>JBoss EAP 8</span><span>Tomcat</span><span>Bash</span><span>Python</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section id="impact">
+    <div class="section-title">
+      <div class="eyebrow">Impact</div>
+      <h2>Engineering Outcomes</h2>
+    </div>
+    <div class="impact-strip">
+      <div class="impact tilt-card"><strong>99.99%</strong><span>Targeted Uptime</span></div>
+      <div class="impact tilt-card"><strong>30%</strong><span>Fewer Outages</span></div>
+      <div class="impact tilt-card"><strong>40%</strong><span>Less Manual Effort</span></div>
+      <div class="impact tilt-card"><strong>4.5+</strong><span>Years Experience</span></div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-title">
+      <div class="eyebrow">Career Journey</div>
+      <h2>Cloud & DevOps Experience</h2>
+      <p>Hands-on enterprise experience across AWS cloud infrastructure, DevOps automation, CI/CD, Kubernetes, middleware administration, and production support.</p>
+    </div>
+
+    <div class="experience-timeline">
+      <article class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card tilt-card">
+          <div class="timeline-date">02/2022 — Present · Chennai, Tamil Nadu</div>
+          <h3>AWS Cloud & DevOps Engineer | Middleware Engineer</h3>
+          <h4>Tata Consultancy Services (TCS)</h4>
+
+          <div class="timeline-tags">
+            <span>AWS</span><span>DevOps</span><span>Kubernetes (EKS)</span><span>Jenkins</span>
+            <span>Docker</span><span>Terraform</span><span>Ansible</span><span>JBoss EAP 8</span><span>Linux</span>
+          </div>
+
+          <div class="experience-subtitle">☁️ AWS Cloud & Infrastructure</div>
+          <ul>
+            <li>Manage and support production and non-production AWS environments with a focus on availability, reliability, security, and operational stability.</li>
+            <li>Administer <strong>50+ EC2 instances</strong>, including provisioning, configuration, patching, resizing, performance monitoring, and maintenance.</li>
+            <li>Support <strong>VPC, public/private subnets, route tables, IGW, NAT Gateway, Security Groups, NACLs, EBS, EFS, RDS, ALB/ELB, Auto Scaling, IAM, Lambda, API Gateway, and CloudWatch</strong>.</li>
+            <li>Support Oracle and PostgreSQL database environments hosted on Amazon RDS and troubleshoot connectivity and availability issues.</li>
+            <li>Implement AWS infrastructure automation and Infrastructure as Code using <strong>Terraform and CloudFormation</strong>.</li>
+          </ul>
+
+          <div class="experience-subtitle">🚀 DevOps & CI/CD</div>
+          <ul>
+            <li>Develop and maintain CI/CD workflows using <strong>GitHub, Jenkins, AWS CodePipeline, AWS CodeDeploy, and GitHub Actions</strong>.</li>
+            <li>Automate application deployment workflows across <strong>Development, QA, UAT, SIT, and Production</strong> environments.</li>
+            <li>Support automated deployment of <strong>JAR, WAR, and EAR</strong> applications to JBoss EAP and Apache Tomcat.</li>
+            <li>Automate Kubernetes deployments using <strong>Helm and Argo CD</strong> and support release validation, rollback, and post-deployment verification.</li>
+          </ul>
+
+          <div class="experience-subtitle">☸️ Kubernetes & Containerization</div>
+          <ul>
+            <li>Manage Kubernetes workloads across development, staging, and production environments.</li>
+            <li>Work with <strong>RBAC, ConfigMaps, Secrets, HPA, and Cluster Autoscaler</strong> for secure and scalable workloads.</li>
+            <li>Provision and manage EKS infrastructure using Terraform and troubleshoot container, networking, and deployment issues.</li>
+          </ul>
+
+          <div class="experience-subtitle">🔧 Middleware & Production Support</div>
+          <ul>
+            <li>Install, configure, upgrade, administer, and troubleshoot <strong>JBoss EAP 7.4/8.0 and Apache Tomcat</strong> across multiple environments.</li>
+            <li>Support JBoss clustering, session replication, load balancing, failover, and high-availability environments.</li>
+            <li>Use <strong>CloudWatch, Elasticsearch, Logstash, and Kibana (ELK)</strong> for centralized logging, dashboards, and operational analysis.</li>
+          </ul>
+
+          <div class="experience-subtitle">⚙️ Automation & Monitoring</div>
+          <ul>
+            <li>Develop <strong>Shell/Bash and Python</strong> automation scripts for server health checks, monitoring, filesystem checks, certificate validation, and recurring operational tasks.</li>
+            <li>Perform root-cause analysis (RCA) for critical production incidents and implement preventive actions.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <!-- Focused Domain Breakdown Cards -->
+    <div class="exp-grid-secondary">
+      <div class="exp-card tilt-card">
+        <h4>Cloud & DevOps Engineering — TCS</h4>
+        <div class="exp-date">Feb 2022 – Present · Chennai</div>
+        <ul>
+          <li>Managed Amazon EC2 instances with Elastic IPs and Auto Scaling for dynamic capacity management.</li>
+          <li>Implemented secure access controls for S3 and EC2 using IAM roles, bucket policies, ACLs, and encryption.</li>
+          <li>Built Jenkins Multibranch Pipelines and GitOps flows with Docker, Helm, and Argo CD.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card tilt-card">
+        <h4>AWS & Network Architecture — TCS</h4>
+        <div class="exp-date">Feb 2022 – Present · Chennai</div>
+        <ul>
+          <li>Architected secure multi-AZ VPCs with private/public subnets, IGW, NAT Gateways, and Route Tables.</li>
+          <li>Designed high-availability RDS architectures with automated failover strategies.</li>
+          <li>Built S3 lifecycle policies with Glacier for compliant backup and archival workflows.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card tilt-card">
+        <h4>Microservices & Reliability — TCS</h4>
+        <div class="exp-date">Feb 2022 – Present · Chennai</div>
+        <ul>
+          <li>Improved system uptime by troubleshooting and resolving microservice performance bottlenecks.</li>
+          <li>Analyzed distributed system logs and metrics to resolve high-priority production incidents.</li>
+          <li>Enforced container and API security best practices across deployment pipelines.</li>
+        </ul>
+      </div>
+
+      <div class="exp-card tilt-card">
+        <h4>Linux & Bash Automation — TCS</h4>
+        <div class="exp-date">Feb 2022 – Present · Chennai</div>
+        <ul>
+          <li>Wrote Bash and Python scripts to parse load averages from logs and trigger automated alert notifications.</li>
+          <li>Automated service startup dependencies and cron/EventBridge schedules across environments.</li>
+          <li>Supported application teams during load testing by automating bottleneck detection workflows.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- KEY ACHIEVEMENTS -->
+  <section id="achievements">
+    <div class="section-title">
+      <div class="eyebrow">Milestones</div>
+      <h2>Key Achievements</h2>
+    </div>
+    <div class="achievement-grid">
+      <div class="achievement-card tilt-card">
+        <div class="achievement-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>Operational Efficiency</h3>
+        <p>
+          Designed and implemented a highly available AWS infrastructure using EC2, RDS, Elastic Load Balancer, and Auto Scaling, achieving <strong>99.99% uptime</strong> and reducing service outages by <strong>30%</strong>.
+        </p>
+      </div>
+
+      <div class="achievement-card tilt-card">
+        <div class="achievement-icon"><i class="fas fa-rocket"></i></div>
+        <h3>CI/CD Acceleration</h3>
+        <p>
+          Built end-to-end CI/CD pipelines using <strong>Jenkins Multibranch, GitHub, Docker, Kubernetes, and Argo CD</strong>, enabling automated testing and <strong>zero-downtime deployments</strong> across all environments.
+        </p>
+      </div>
+
+      <div class="achievement-card tilt-card">
+        <div class="achievement-icon"><i class="fas fa-cogs"></i></div>
+        <h3>Infrastructure Automation</h3>
+        <p>
+          Automated infrastructure provisioning and configuration using <strong>Terraform, Ansible, Jenkins, and AWS Services</strong>, reducing manual effort by <strong>40%</strong> and accelerating release cycles.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS & DESIGN (PHYSICS DRAGGABLE TRACK) -->
+  <section id="Design">
+    <div class="drag-header-row">
+      <div class="section-title" style="margin:0;">
+        <div class="eyebrow">Creative & Visual Portfolio</div>
+        <h2>Projects & Design Showcase</h2>
+      </div>
+      <div class="drag-hint"><i class="fas fa-hand-rock"></i> Grab & Drag Horizontally</div>
+    </div>
+
+    <div class="drag-viewport" id="projectsViewport">
+      <div class="drag-track" id="projectsTrack">
+        <div class="showcase-card tilt-card">
+          <img src="image/thar.png" alt="Project Design 1" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">Automotive & Concept Render</div>
+          <div class="card-meta">Digital Visualization & Lighting</div>
+          <button class="zoom-btn" data-src="image/thar.png">View Fullscreen</button>
+        </div>
+
+        <div class="showcase-card tilt-card">
+          <img src="image/24.png" alt="Project Design 2" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">Editorial & Visual Composition</div>
+          <div class="card-meta">Graphic & Concept Art</div>
+          <button class="zoom-btn" data-src="image/24.png">View Fullscreen</button>
+        </div>
+
+        <div class="showcase-card tilt-card">
+          <img src="image/logo 3gh.23.jpg" alt="3D Brand Emblem" onerror="this.src='https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">3D Metallic Brand Emblem</div>
+          <div class="card-meta">Blender 3D & Shader Design</div>
+          <button class="zoom-btn" data-src="image/logo 3gh.23.jpg">View Fullscreen</button>
+        </div>
+
+        <div class="showcase-card tilt-card">
+          <img src="image/gpommcnnnnnf.57.jpg" alt="Visual Artwork" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">Retro & Digital Artwork</div>
+          <div class="card-meta">Creative Direction</div>
+          <button class="zoom-btn" data-src="image/gpommcnnnnnf.57.jpg">View Fullscreen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS (PHYSICS DRAGGABLE TRACK) -->
+  <section id="cert">
+    <div class="drag-header-row">
+      <div class="section-title" style="margin:0;">
+        <div class="eyebrow">Credentials</div>
+        <h2>Certifications</h2>
+      </div>
+      <div class="drag-hint"><i class="fas fa-arrows-alt-h"></i> Drag to Explore</div>
+    </div>
+
+    <div class="drag-viewport" id="certViewport">
+      <div class="drag-track" id="certTrack">
+        <div class="showcase-card tilt-card">
+          <img src="image/aws-certified-cloud-practitioner.png" alt="AWS Cloud Practitioner" onerror="this.src='https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">AWS Certified Cloud Practitioner</div>
+          <div class="card-meta">Issued: July 2025</div>
+          <button class="zoom-btn" data-src="image/aws-certified-cloud-practitioner.png">Verify / Enlarge</button>
+        </div>
+
+        <div class="showcase-card tilt-card">
+          <img src="image/aws-certified-solutions-architect-associate.png" alt="AWS Solutions Architect Associate" onerror="this.src='https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">AWS Certified Solutions Architect – Associate</div>
+          <div class="card-meta">Issued: October 2025</div>
+          <button class="zoom-btn" data-src="image/aws-certified-solutions-architect-associate.png">Verify / Enlarge</button>
+        </div>
+
+        <div class="showcase-card tilt-card">
+          <img src="image/associate-cloud-engineer-certification.png" alt="Associate Cloud Engineer" onerror="this.src='https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">Associate Cloud Engineer Certification</div>
+          <div class="card-meta">Issued: October 2025</div>
+          <button class="zoom-btn" data-src="image/associate-cloud-engineer-certification.png">Verify / Enlarge</button>
+        </div>
+
+        <div class="showcase-card tilt-card">
+          <img src="image/Oracle_Associates_Badge__1___1_-removebg-preview.png" alt="Oracle Cloud Architect Associate" onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80'">
+          <div class="card-title">Oracle Cloud Architect Associate</div>
+          <div class="card-meta">Issued: October 2025</div>
+          <button class="zoom-btn" data-src="image/Oracle_Associates_Badge__1___1_-removebg-preview.png">Verify / Enlarge</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-title" style="text-align:center;">
+      <div class="eyebrow">Get In Touch</div>
+      <h2>Let's Build Resilient Cloud Systems</h2>
+    </div>
+    <div class="contact-wrap tilt-card">
+      <input id="name" class="input" placeholder="Your name" />
+      <input id="email" class="input" type="email" placeholder="Email address" />
+      <input id="subject" class="input" placeholder="Subject" />
+      <textarea id="message" class="input" rows="5" placeholder="Message"></textarea>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:8px;">
+        <button class="send-btn magnetic" id="sendBtn">Send Message</button>
+        <button class="send-btn magnetic" id="resetBtn" style="background:transparent; color:var(--text); border:1px solid var(--border);">Reset</button>
+      </div>
+      <div id="formStatus" style="text-align:center; color:var(--muted); margin-top:8px; font-size:13.5px;"></div>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 Manish Kumar R — Engineered with Interactive Physics & GSAP
+  </footer>
+</div>
+
+<!-- Lightbox modal -->
+<div class="lightbox" id="lightbox" role="dialog" aria-hidden="true">
+  <img id="lightboxImg" src="" alt="Enlarged preview">
+</div>
+
+<script>
+gsap.registerPlugin(ScrollTrigger, Draggable);
+
+const EMAILJS_SERVICE_ID = '';
+const EMAILJS_TEMPLATE_ID = '';
+const EMAILJS_PUBLIC_KEY = '';
+
+/* ========== PRELOADER ========== */
+gsap.to('#progressBar', {
+  width: "100%",
+  duration: 1.2,
+  ease: "power2.out",
+  onComplete: () => {
+    gsap.to('#preloader', {
+      opacity: 0,
+      duration: 0.6,
+      onComplete: () => document.getElementById('preloader').style.display = 'none'
+    });
+    gsap.from('.hero-left > *', { y: 30, opacity: 0, stagger: 0.12, duration: 0.8, ease: "power3.out" });
+    gsap.from('.sandbox-card', { scale: 0.92, opacity: 0, duration: 0.9, delay: 0.2, ease: "back.out(1.4)" });
+  }
+});
+
+/* =========================================================================
+   ALGORITHM 1: MOMENTUM & INERTIA DRAG ENGINE (Tracks + Live Cloud Sandbox)
+   ========================================================================= */
+function initMomentumTrack(viewportId, trackId) {
+  const viewport = document.getElementById(viewportId);
+  const track = document.getElementById(trackId);
+  if (!viewport || !track) return;
+
+  let vx = 0;
+  let lastX = 0;
+  let rafId = null;
+
+  const getBounds = () => {
+    const minX = Math.min(0, viewport.clientWidth - track.scrollWidth - 20);
+    return { minX, maxX: 0 };
+  };
+
+  Draggable.create(track, {
+    type: "x",
+    edgeResistance: 0.65,
+    bounds: getBounds(),
+    onPress() {
+      cancelAnimationFrame(rafId);
+      vx = 0;
+      lastX = this.x;
+      document.getElementById('cursorRing')?.classList.add('is-dragging');
+    },
+    onDrag() {
+      vx = this.x - lastX;
+      lastX = this.x;
+    },
+    onRelease() {
+      document.getElementById('cursorRing')?.classList.remove('is-dragging');
+      const bounds = getBounds();
+      let currentX = this.x;
+
+      const coast = () => {
+        vx *= 0.92; // Friction decay coefficient
+        currentX += vx;
+
+        // Elastic boundary bounce
+        if (currentX > bounds.maxX) {
+          currentX += (bounds.maxX - currentX) * 0.25;
+          vx *= 0.5;
+        } else if (currentX < bounds.minX) {
+          currentX += (bounds.minX - currentX) * 0.25;
+          vx *= 0.5;
+        }
+
+        gsap.set(track, { x: currentX });
+        if (Math.abs(vx) > 0.35) {
+          rafId = requestAnimationFrame(coast);
+        }
+      };
+      rafId = requestAnimationFrame(coast);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    const d = Draggable.get(track);
+    if (d) d.applyBounds(getBounds());
+  });
+}
+
+initMomentumTrack('projectsViewport', 'projectsTrack');
+initMomentumTrack('certViewport', 'certTrack');
+
+/* Interactive Cloud Topology Sandbox (Draggable Nodes + Dynamic SVG Bezier Cables) */
+(function initCloudSandbox() {
+  const stage = document.getElementById('sandboxStage');
+  const svg = document.getElementById('sandboxSvg');
+  if (!stage || !svg) return;
+
+  const connections = [
+    ['node-alb', 'node-eks'],
+    ['node-alb', 'node-jboss'],
+    ['node-eks', 'node-rds'],
+    ['node-jboss', 'node-rds'],
+    ['node-argo', 'node-eks']
+  ];
+
+  const lines = connections.map(() => {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('stroke', 'rgba(0, 240, 255, 0.45)');
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-dasharray', '5,5');
+    svg.appendChild(path);
+    return path;
+  });
+
+  function updateLinks() {
+    const stageRect = stage.getBoundingClientRect();
+    connections.forEach(([idA, idB], i) => {
+      const elA = document.getElementById(idA);
+      const elB = document.getElementById(idB);
+      if (!elA || !elB) return;
+      const rA = elA.getBoundingClientRect();
+      const rB = elB.getBoundingClientRect();
+
+      const x1 = rA.left - stageRect.left + rA.width / 2;
+      const y1 = rA.top - stageRect.top + rA.height / 2;
+      const x2 = rB.left - stageRect.left + rB.width / 2;
+      const y2 = rB.top - stageRect.top + rB.height / 2;
+
+      const cx = (x1 + x2) / 2;
+      lines[i].setAttribute('d', `M ${x1} ${y1} Q ${cx} ${y1}, ${x2} ${y2}`);
+    });
+  }
+
+  Draggable.create('.cloud-node', {
+    bounds: stage,
+    edgeResistance: 0.75,
+    onPress() {
+      gsap.to(this.target, { scale: 1.08, duration: 0.2 });
+    },
+    onDrag: updateLinks,
+    onRelease() {
+      gsap.to(this.target, { scale: 1, duration: 0.3, ease: 'elastic.out(1, 0.5)', onUpdate: updateLinks });
+    }
+  });
+
+  window.addEventListener('load', updateLinks);
+  window.addEventListener('resize', updateLinks);
+  setTimeout(updateLinks, 500);
+})();
+
+/* =========================================================================
+   ALGORITHM 2: 3D PERSPECTIVE TILT & SPECULAR RADIAL GLARE
+   ========================================================================= */
+document.querySelectorAll('.tilt-card').forEach(card => {
+  const glare = document.createElement('div');
+  glare.className = 'tilt-glare';
+  card.appendChild(glare);
+
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -6;
+    const rotateY = ((x - centerX) / centerX) * 6;
+
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      transformPerspective: 900,
+      duration: 0.35,
+      ease: 'power2.out'
+    });
+  });
+
+  card.addEventListener('mouseleave', () => {
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      duration: 0.7,
+      ease: 'elastic.out(1, 0.5)'
+    });
+  });
+});
+
+/* =========================================================================
+   ALGORITHM 3: HOOKE'S LAW SPRING MAGNETIC BUTTONS
+   ========================================================================= */
+document.querySelectorAll('.magnetic').forEach(el => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const dx = (e.clientX - (rect.left + rect.width / 2)) * 0.38;
+    const dy = (e.clientY - (rect.top + rect.height / 2)) * 0.38;
+    gsap.to(el, { x: dx, y: dy, duration: 0.25, ease: 'power2.out' });
+  });
+  el.addEventListener('mouseleave', () => {
+    gsap.to(el, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
+  });
+});
+
+/* =========================================================================
+   ALGORITHM 4: INTERACTIVE PARTICLE NETWORK CANVAS + DUAL SPRING CURSOR
+   ========================================================================= */
+(function initPhysicsCanvasAndCursor() {
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  const canvas = document.getElementById('physicsCanvas');
+  const ctx = canvas.getContext('2d');
+
+  let width = canvas.width = window.innerWidth;
+  let height = canvas.height = window.innerHeight;
+
+  const mouse = { x: width / 2, y: height / 2, isDown: false };
+  const ringPos = { x: width / 2, y: height / 2 };
+
+  window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    gsap.set(dot, { x: mouse.x, y: mouse.y });
+  });
+
+  window.addEventListener('mousedown', () => {
+    mouse.isDown = true;
+    ring.classList.add('is-dragging');
+  });
+  window.addEventListener('mouseup', () => {
+    mouse.isDown = false;
+    ring.classList.remove('is-dragging');
+  });
+
+  document.querySelectorAll('a, button, .cloud-node, .drag-viewport, .toggle').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('is-hovering'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('is-hovering'));
+  });
+
+  const particleCount = Math.min(55, Math.floor(width / 26));
+  const particles = Array.from({ length: particleCount }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    vx: (Math.random() - 0.5) * 0.65,
+    vy: (Math.random() - 0.5) * 0.65,
+    r: Math.random() * 2 + 1
+  }));
+
+  function animate() {
+    // Spring interpolation for outer cursor ring
+    ringPos.x += (mouse.x - ringPos.x) * 0.18;
+    ringPos.y += (mouse.y - ringPos.y) * 0.18;
+    gsap.set(ring, { x: ringPos.x, y: ringPos.y });
+
+    ctx.clearRect(0, 0, width, height);
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > width) p.vx *= -1;
+      if (p.y < 0 || p.y > height) p.vy *= -1;
+
+      // Mouse interaction (attracts on click-drag, gently repels on move)
+      const dx = mouse.x - p.x;
+      const dy = mouse.y - p.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 160 && dist > 1) {
+        const force = (160 - dist) / 160;
+        const dir = mouse.isDown ? 0.035 : -0.015;
+        p.vx += (dx / dist) * force * dir;
+        p.vy += (dy / dist) * force * dir;
+      }
+
+      // Speed damping limit
+      const speed = Math.hypot(p.vx, p.vy);
+      if (speed > 2.2) {
+        p.vx = (p.vx / speed) * 2.2;
+        p.vy = (p.vy / speed) * 2.2;
+      }
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 240, 255, 0.55)';
+      ctx.fill();
+
+      for (let j = i + 1; j < particles.length; j++) {
+        const p2 = particles[j];
+        const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+        if (d < 130) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = `rgba(0, 240, 255, ${(1 - d / 130) * 0.22})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* ========== RESUME DOWNLOAD ========== */
+document.getElementById('downloadResume').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.href = "asset/Manish_Kumar.pdf";
+  a.download = "Manish_Kumar.pdf";
+  a.click();
+});
+
+/* ========== THEME TOGGLE ========== */
+const themeToggle = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+const themeIcon = document.getElementById('themeIcon');
+const savedTheme = localStorage.getItem('theme') || 'dark';
+
+const setTheme = (theme) => {
+  if (theme === 'light') {
+    document.documentElement.style.setProperty('--bg', '#f4f6fb');
+    document.documentElement.style.setProperty('--text', '#081018');
+    document.documentElement.style.setProperty('--glass', 'rgba(0,0,0,0.04)');
+    document.documentElement.style.setProperty('--border', 'rgba(0,0,0,0.1)');
+    document.documentElement.style.setProperty('--muted', 'rgba(8,16,24,0.65)');
+    document.documentElement.style.setProperty('--neon-1', '#0055ff');
+    document.documentElement.style.setProperty('--neon-2', '#8a2be2');
+    themeIcon.innerText = '☀️';
+    themeLabel.innerText = 'Light';
+  } else {
+    document.documentElement.style.setProperty('--bg', '#04040e');
+    document.documentElement.style.setProperty('--text', '#eaf2ff');
+    document.documentElement.style.setProperty('--glass', 'rgba(255,255,255,0.04)');
+    document.documentElement.style.setProperty('--border', 'rgba(255,255,255,0.08)');
+    document.documentElement.style.setProperty('--muted', 'rgba(234,242,255,0.65)');
+    document.documentElement.style.setProperty('--neon-1', '#00f0ff');
+    document.documentElement.style.setProperty('--neon-2', '#ff00ff');
+    themeIcon.innerText = '🌗';
+    themeLabel.innerText = 'Dark';
+  }
+  localStorage.setItem('theme', theme);
+};
+setTheme(savedTheme);
+themeToggle.addEventListener('click', () => {
+  const cur = localStorage.getItem('theme') || 'dark';
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+});
+
+/* ========== SCROLL SPY & SECTION REVEALS ========== */
+const navBtns = Array.from(document.querySelectorAll('nav .nav-btn'));
+const sections = document.querySelectorAll('section');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    navBtns.forEach(n => n.classList.remove('active'));
+    const target = navBtns.find(n => n.querySelector('a')?.getAttribute('href') === '#' + entry.target.id);
+    if (target) target.classList.add('active');
+  });
+}, { threshold: 0.35 });
+sections.forEach(s => observer.observe(s));
+
+gsap.utils.toArray('section').forEach(section => {
+  gsap.from(section, {
+    scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play none none none" },
+    y: 36,
+    opacity: 0,
+    duration: 0.85,
+    ease: "power2.out"
+  });
+});
+
+/* ========== LIGHTBOX FOR PROJECTS & CERTS ========== */
+document.querySelectorAll('.zoom-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const src = btn.getAttribute('data-src');
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    lbImg.src = src;
+    lb.style.display = 'flex';
+  });
+});
+document.getElementById('lightbox').addEventListener('click', () => {
+  document.getElementById('lightbox').style.display = 'none';
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('lightbox').style.display = 'none';
+});
+
+/* ========== EMAILJS CONTACT FORM ========== */
+const statusEl = document.getElementById('formStatus');
+if (window.emailjs && EMAILJS_PUBLIC_KEY) {
+  try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) { console.warn(e); }
+}
+
+document.getElementById('sendBtn').addEventListener('click', async () => {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const subject = document.getElementById('subject').value.trim();
+  const message = document.getElementById('message').value.trim();
+
+  if (!name || !email || !message) {
+    statusEl.textContent = 'Please fill in your name, email, and message.';
+    return;
+  }
+  if (!EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID || !EMAILJS_PUBLIC_KEY) {
+    statusEl.textContent = `Demo Mode: Ready to send from ${name} (${email}). Add EmailJS keys in script to activate live delivery.`;
+    return;
+  }
+  statusEl.textContent = 'Sending...';
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { from_name: name, from_email: email, subject, message });
+    statusEl.style.color = '#00ff88';
+    statusEl.textContent = 'Message sent — thank you!';
+    document.getElementById('resetBtn').click();
+  } catch (err) {
+    statusEl.style.color = '#ff6b6b';
+    statusEl.textContent = 'Error sending message. Check EmailJS configuration.';
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  ['name','email','subject','message'].forEach(id => document.getElementById(id).value = '');
+  statusEl.textContent = '';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1923 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Manish Kumar R — Cloud, DevOps & Middleware Engineer | Argon 4</title>
+
+<!-- Fonts + Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<!-- GSAP + ScrollTrigger + Draggable -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
+
+<style>
+  :root {
+    --bg: #000000;
+    --card-bg: #050508;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --neon-1: #00f0ff;
+    --neon-2: #ff00e5;
+    --text: #f2f6ff;
+    --muted: rgba(242, 246, 255, 0.66);
+    --accent: linear-gradient(135deg, var(--neon-1), var(--neon-2));
+    --argon-glow: 0 22px 55px -10px rgba(0, 240, 255, 0.38);
+  }
+
+  * {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* Subtle Pure Black Cyber Grid */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0, 240, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 240, 255, 0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    min-height: 100vh;
+    z-index: 1;
+  }
+
+  /* ── NAVIGATION (PURE BLACK FLOATING DOCK) ── */
+  nav {
+    position: fixed;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 8px 14px;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+    max-width: 96vw;
+    overflow-x: auto;
+  }
+
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #000000;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .nav-btn {
+    border-radius: 999px;
+    padding: 7px 13px;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .nav-btn a {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .nav-btn:hover, .nav-btn.active {
+    background: rgba(0, 240, 255, 0.14);
+    box-shadow: inset 0 0 0 1px rgba(0, 240, 255, 0.4);
+  }
+
+  .nav-btn:hover a, .nav-btn.active a {
+    color: var(--neon-1);
+  }
+
+  .nav-btn.contact-pill {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.22), rgba(255, 0, 229, 0.22));
+    border: 1px solid rgba(0, 240, 255, 0.45);
+  }
+
+  .nav-btn.contact-pill a {
+    color: var(--text);
+  }
+
+  .toggle {
+    cursor: pointer;
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  /* ── PRELOADER ── */
+  .preloader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 20000;
+    background: #000000;
+  }
+
+  .preloader .logo {
+    font-weight: 900;
+    letter-spacing: 3px;
+    font-size: 26px;
+    background: var(--accent);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .progress-wrap {
+    width: 280px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0;
+    background: var(--accent);
+  }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 110px 6% 60px;
+    background: #000000;
+  }
+
+  iframe.spline {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    z-index: 1;
+    opacity: 0.72;
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.32;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .orb.orb-1 { width: 450px; height: 450px; left: -120px; top: -60px; background: radial-gradient(circle, var(--neon-1), transparent 60%); }
+  .orb.orb-2 { width: 420px; height: 420px; right: -80px; bottom: -100px; background: radial-gradient(circle, var(--neon-2), transparent 60%); }
+
+  .hero-content {
+    position: relative;
+    z-index: 6;
+    max-width: 1240px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    pointer-events: none;
+  }
+
+  .hero-left {
+    max-width: 760px;
+    pointer-events: auto;
+  }
+
+  .argon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+    color: var(--neon-1);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    backdrop-filter: blur(8px);
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 12px #00ff88;
+    animation: pulse 1.8s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.35); opacity: 0.55; }
+  }
+
+  .intro {
+    font-weight: 900;
+    font-size: clamp(38px, 5.2vw, 62px);
+    line-height: 1.05;
+    margin-bottom: 14px;
+    letter-spacing: -1px;
+  }
+
+  .intro span {
+    background: var(--accent);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .typed-wrap {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(15px, 2vw, 19px);
+    color: var(--neon-1);
+    font-weight: 600;
+    margin-bottom: 14px;
+    min-height: 28px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.65;
+    max-width: 620px;
+    margin-bottom: 28px;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .btn {
+    cursor: pointer;
+    padding: 13px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    transition: transform 0.25s cubic-bezier(.2, .8, .2, 1), box-shadow 0.25s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000000;
+    box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 36px rgba(0, 240, 255, 0.45);
+  }
+
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--neon-1);
+    background: rgba(0, 240, 255, 0.1);
+    transform: translateY(-3px);
+  }
+
+  /* ── SECTIONS & HEADINGS ── */
+  section {
+    padding: 88px 6%;
+    position: relative;
+  }
+
+  .section-title {
+    max-width: 1280px;
+    margin: 0 auto 36px;
+  }
+
+  .section-title .eyebrow {
+    color: var(--neon-1);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .section-title h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    margin: 8px 0 8px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-title p {
+    color: var(--muted);
+    max-width: 760px;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* ── PURE BLACK 3D PERSPECTIVE DRAG CARD ENGINE (FIXED INNER ALIGNMENT) ── */
+  .argon-card {
+    position: relative;
+    overflow: hidden;
+    background: #050509;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: grab;
+    user-select: none;
+    will-change: transform, box-shadow;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.9);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .argon-card:active {
+    cursor: grabbing;
+  }
+
+  /* 3D Dynamic Glare & Neon Rim Spotlight */
+  .argon-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(0, 240, 255, 0.16),
+      rgba(255, 0, 229, 0.05) 45%,
+      transparent 75%
+    );
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .argon-card:hover,
+  .argon-card.is-dragging {
+    border-color: var(--neon-1);
+    box-shadow:
+      0 35px 70px rgba(0, 0, 0, 0.95),
+      0 0 38px rgba(0, 240, 255, 0.35),
+      inset 0 0 18px rgba(0, 240, 255, 0.12);
+  }
+
+  .argon-card.is-dragging {
+    z-index: 9999 !important;
+  }
+
+  .argon-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── ABOUT / PROFILE (PERFECTLY CENTERED PHOTO INSIDE CARD) ── */
+  .about-wrap {
+    display: flex;
+    gap: 32px;
+    align-items: stretch;
+    max-width: 1280px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .profile {
+    width: 350px;
+    min-width: 300px;
+    border-radius: 24px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: #040408;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Fixed Profile Image Box: Centered 100% Inside Card with Equal Margins */
+  .profile-img-box {
+    width: 100%;
+    height: 360px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000000 !important;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .profile-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+    display: block;
+    background: #000000 !important;
+    pointer-events: none;
+  }
+
+  .profile-meta {
+    width: 100%;
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .social-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+    width: 100%;
+  }
+
+  .social-row a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #0a0a12;
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 17px;
+    transition: all 0.25s ease;
+  }
+
+  .social-row a:hover {
+    background: var(--accent);
+    color: #000000;
+    transform: translateY(-4px);
+  }
+
+  .about-info {
+    flex: 1;
+    min-width: 320px;
+    border-radius: 24px;
+    padding: 32px;
+  }
+
+  .about-info h3 {
+    font-size: 26px;
+    margin: 0 0 10px;
+  }
+
+  .about-info p {
+    color: var(--muted);
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+
+  .meta-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    padding: 16px;
+    border-radius: 14px;
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 22px;
+    font-size: 14px;
+  }
+
+  .meta-list a {
+    color: var(--neon-1);
+    text-decoration: none;
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+
+  .skill-pill {
+    background: #08080f;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s ease;
+  }
+
+  .skill-pill:hover {
+    border-color: var(--neon-1);
+    background: rgba(0, 240, 255, 0.14);
+    transform: translateY(-2px);
+  }
+
+  /* ── DEVOPS STACK (ALL 6 CARDS SHOWN ON ONE PAGE) ── */
+  .devops-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px;
+  }
+
+  .devops-card {
+    border-radius: 20px;
+    padding: 26px;
+  }
+
+  .devops-icon {
+    font-size: 34px;
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+
+  .devops-card h3 {
+    margin: 0 0 8px;
+    font-size: 19px;
+  }
+
+  .devops-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 16px;
+  }
+
+  .tech-tags span {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid rgba(0, 240, 255, 0.28);
+    background: #000000;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--text);
+  }
+
+  /* ── IMPACT STRIP ── */
+  .impact-strip {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .impact {
+    padding: 26px 18px;
+    text-align: center;
+    border-radius: 18px;
+  }
+
+  .impact strong {
+    display: block;
+    font-size: 36px;
+    font-weight: 900;
+    background: var(--accent);
+    -webkit-background-clip: text;
+    color: transparent;
+    margin-bottom: 4px;
+  }
+
+  .impact span {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* ── STEP-BY-STEP TRANSPARENT BLACK EXPERIENCE TIMELINE ── */
+  .experience-timeline {
+    position: relative;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 10px 0 10px 44px;
+  }
+
+  .experience-timeline::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--neon-1), var(--neon-2), var(--neon-1));
+    box-shadow: 0 0 15px var(--neon-1);
+  }
+
+  .step-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .step-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .step-badge-dot {
+    position: absolute;
+    left: -44px;
+    top: 22px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #000000;
+    border: 2px solid var(--neon-1);
+    box-shadow: 0 0 18px rgba(0, 240, 255, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--neon-1);
+    z-index: 2;
+  }
+
+  .step-transparent-card {
+    background: rgba(0, 0, 0, 0.65) !important;
+    border-radius: 20px;
+    padding: 24px 28px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .step-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+  }
+
+  .step-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .step-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: var(--neon-1);
+  }
+
+  .step-transparent-card ul {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--muted);
+    line-height: 1.75;
+    font-size: 14.5px;
+  }
+
+  .step-transparent-card li {
+    margin-bottom: 7px;
+  }
+
+  /* ── KEY ACHIEVEMENTS ── */
+  .achievement-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px;
+  }
+
+  .achievement-card {
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .achievement-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    background: var(--accent);
+    color: #000000;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
+  }
+
+  /* ── PROJECTS (ALL 10 SHOWN ON ONE PAGE) & CERTIFICATIONS (ALL 4 SHOWN ON ONE PAGE) ── */
+  .projects-full-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+    gap: 20px;
+  }
+
+  .certs-full-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(265px, 1fr));
+    gap: 22px;
+  }
+
+  .showcase-card {
+    height: 325px;
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .showcase-img-wrap {
+    width: 100%;
+    height: 195px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #000000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .showcase-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+    pointer-events: none;
+  }
+
+  .showcase-card:hover .showcase-img-wrap img {
+    transform: scale(1.06);
+  }
+
+  .multi-photo-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 4;
+    background: rgba(0, 0, 0, 0.88);
+    border: 1px solid rgba(0, 240, 255, 0.5);
+    color: var(--neon-1);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Pure Black Certificate Photo Styling */
+  .cert-photo-wrap {
+    background: #000000 !important;
+    padding: 12px;
+  }
+
+  .cert-photo-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain !important;
+  }
+
+  .card-meta {
+    margin-top: 12px;
+  }
+
+  .card-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+
+  .card-sub {
+    font-size: 12px;
+    color: var(--neon-1);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── MULTI-PHOTO GALLERY MODAL ── */
+  .gallery-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.94);
+    backdrop-filter: blur(18px);
+    z-index: 30000;
+    padding: 24px;
+  }
+
+  .gallery-modal.open {
+    display: flex;
+  }
+
+  .gallery-top-bar {
+    width: 100%;
+    max-width: 980px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .gallery-title-wrap h3 {
+    margin: 0;
+    font-size: 20px;
+    color: var(--text);
+  }
+
+  .gallery-title-wrap span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--neon-1);
+  }
+
+  .gallery-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .gallery-close-btn:hover {
+    background: #ff0055;
+    border-color: #ff0055;
+  }
+
+  .gallery-stage {
+    position: relative;
+    width: 100%;
+    max-width: 980px;
+    height: 62vh;
+    background: #000000;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95);
+  }
+
+  .gallery-stage img {
+    max-width: 94%;
+    max-height: 92%;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+
+  .gallery-thumbs {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    max-width: 980px;
+    overflow-x: auto;
+    padding: 6px;
+  }
+
+  .gallery-thumb {
+    width: 86px;
+    height: 58px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    opacity: 0.55;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .gallery-thumb.active, .gallery-thumb:hover {
+    border-color: var(--neon-1);
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+
+  .gallery-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ── CONTACT + GOOGLE FORM INTEGRATION ── */
+  .contact-grid {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+
+  .google-form-card, .contact-wrap {
+    border-radius: 22px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .contact-wrap {
+    gap: 14px;
+  }
+
+  .input {
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: #000000;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .input:focus {
+    border-color: var(--neon-1);
+    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.12);
+  }
+
+  footer {
+    padding: 44px 6%;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid var(--glass-border);
+    background: #000000;
+  }
+
+  @media (max-width: 920px) {
+    .contact-grid { grid-template-columns: 1fr; }
+    .impact-strip { grid-template-columns: repeat(2, 1fr); }
+    .gallery-stage { height: 48vh; }
+    .profile { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="wrap">
+
+  <!-- ARGON 4.11 FLOATING NAVBAR -->
+  <nav>
+    <div class="nav-brand">Manish_Portfolio</div>
+    <div class="nav-btn"><a href="#about">About</a></div>
+    <div class="nav-btn"><a href="#stack">Stack</a></div>
+    <div class="nav-btn"><a href="#experience">Experience</a></div>
+    <div class="nav-btn"><a href="#achievements">Achievements</a></div>
+    <div class="nav-btn"><a href="#Design">Projects (10)</a></div>
+    <div class="nav-btn"><a href="#cert">Certifications</a></div>
+    <div class="nav-btn contact-pill"><a href="#contact" id="navContactBtn"><i class="fas fa-paper-plane"></i> Contact</a></div>
+    <div class="toggle" id="themeToggle" title="Toggle theme">🌗 <span id="themeLabel">Black</span></div>
+  </nav>
+
+  <!-- PRELOADER -->
+  <div class="preloader" id="preloader" aria-hidden="false">
+    <div class="logo">AWS 2026</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero" id="home">
+    <iframe class="spline" src="https://my.spline.design/orb-WJJLRQLUDMdwoXsST4jT67gj/" allow="fullscreen"></iframe>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="hero-content">
+      <div class="hero-left">
+        <div class="argon-badge">
+          <span class="pulse-dot"></span> SENIOR CLOUD, DEVOPS & MIDDLEWARE ENGINEER
+        </div>
+        <div class="intro">Hi, I'm <span>Manish Kumar R</span></div>
+        <div class="typed-wrap" id="typedOutput">AWS Cloud Architect • Kubernetes • JBoss EAP 8 • CI/CD</div>
+        <div class="subtitle">
+          4.5+ years of enterprise experience building resilient AWS infrastructure, zero-downtime Kubernetes platforms, JBoss EAP 8 middleware clusters, and automated CI/CD pipelines.
+        </div>
+        <div class="cta-row">
+          <button class="btn btn-primary" id="downloadResume">
+            <i class="fas fa-download"></i> Download Resume
+          </button>
+          <button class="btn btn-ghost" id="heroGoogleFormBtn">
+            <i class="fab fa-wpforms"></i> Open Google Form
+          </button>
+          <button class="btn btn-ghost" onclick="document.querySelector('#contact').scrollIntoView({behavior:'smooth'})">
+            <i class="fas fa-envelope"></i> Contact Me
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABOUT (PERFECTLY ALIGNED PHOTO INSIDE PURE BLACK BOX) -->
+  <section id="about">
+    <div class="section-title">
+      <div class="eyebrow">01 // Profile (3D Interactive Drag)</div>
+      <h2>About Me</h2>
+    </div>
+
+    <div class="about-wrap">
+      <div class="profile argon-card">
+        <div class="profile-img-box">
+          <img src="image/Manish_coat.png" alt="Manish Kumar R" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80'">
+        </div>
+
+        <div class="profile-meta">
+          <div style="font-weight:800; font-size:20px;">Manish Kumar R</div>
+          <div style="color:var(--neon-1); font-size:13px; font-weight:600; margin-top:4px;">Senior Cloud & DevOps Engineer</div>
+        </div>
+
+        <div class="social-row">
+          <a href="https://www.linkedin.com/in/manish-kumar-r-a834261b6/" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.behance.net/manishkumar324" target="_blank" rel="noopener"><i class="fab fa-behance"></i></a>
+          <a href="https://github.com/" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+          <a href="https://drive.google.com/drive/folders/1S6Y3Jna8-oWzcncy6T9Pl92ReXuF9Bzz" target="_blank" rel="noopener"><i class="fab fa-google-drive"></i></a>
+        </div>
+      </div>
+
+      <div class="about-info argon-card">
+        <h3>Engineering Scalable Cloud & Middleware Platforms</h3>
+        <p>
+          Senior Cloud & DevOps Engineer with 4.5+ years of experience at Tata Consultancy Services (TCS) specializing in AWS infrastructure, Kubernetes (EKS), CI/CD automation, and enterprise JBoss EAP 8 / Apache Tomcat middleware environments.
+        </p>
+
+        <div class="meta-list">
+          <div><strong>Name:</strong> Manish Kumar R</div>
+          <div><strong>Birthday:</strong> 13-Nov-1998</div>
+          <div><strong>Degree:</strong> B.E. Mechanical Engineering</div>
+          <div><strong>Experience:</strong> 4.5+ Years</div>
+          <div><strong>Phone:</strong> +91 8300660217</div>
+          <div><strong>Email:</strong> <a href="mailto:mani.can1311@gmail.com">mani.can1311@gmail.com</a></div>
+        </div>
+
+        <div class="skills">
+          <div class="skill-pill">AWS Cloud</div>
+          <div class="skill-pill">Amazon EC2</div>
+          <div class="skill-pill">Amazon EKS / Kubernetes</div>
+          <div class="skill-pill">JBoss EAP 7.4 / 8.0</div>
+          <div class="skill-pill">Apache Tomcat</div>
+          <div class="skill-pill">Terraform</div>
+          <div class="skill-pill">Ansible</div>
+          <div class="skill-pill">Jenkins CI/CD</div>
+          <div class="skill-pill">Argo CD</div>
+          <div class="skill-pill">Helm Charts</div>
+          <div class="skill-pill">Docker</div>
+          <div class="skill-pill">VPC & Networking</div>
+          <div class="skill-pill">Amazon RDS</div>
+          <div class="skill-pill">AWS Lambda</div>
+          <div class="skill-pill">S3 & IAM</div>
+          <div class="skill-pill">Auto Scaling & ALB</div>
+          <div class="skill-pill">CloudFormation</div>
+          <div class="skill-pill">CloudWatch</div>
+          <div class="skill-pill">Prometheus & Grafana</div>
+          <div class="skill-pill">ELK / Splunk</div>
+          <div class="skill-pill">RHEL Linux</div>
+          <div class="skill-pill">Bash / Shell & Python</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODERN DEVOPS STACK (ALL 6 CARDS WITH 3D DRAG TILT) -->
+  <section id="stack">
+    <div class="section-title">
+      <div class="eyebrow">02 // Interactive 3D Architecture Stack</div>
+      <h2>Cloud, Automation & Reliability</h2>
+      <p>Grab and drag any card in 3D space — dynamic 3D pitch, roll, and depth elevation active on all cards.</p>
+    </div>
+
+    <div class="devops-grid">
+      <article class="devops-card argon-card">
+        <div class="devops-icon">🏗️</div>
+        <h3>Infrastructure as Code</h3>
+        <p>Repeatable, version-controlled provisioning and configuration management.</p>
+        <div class="tech-tags"><span>Terraform</span><span>CloudFormation</span><span>Ansible</span><span>Python</span></div>
+      </article>
+
+      <article class="devops-card argon-card">
+        <div class="devops-icon">☁️</div>
+        <h3>AWS Cloud Architecture</h3>
+        <p>High-availability multi-AZ cloud infrastructure and secure VPC topologies.</p>
+        <div class="tech-tags"><span>EC2</span><span>S3</span><span>IAM</span><span>VPC</span><span>RDS</span><span>ALB</span><span>CloudWatch</span></div>
+      </article>
+
+      <article class="devops-card argon-card">
+        <div class="devops-icon">☸️</div>
+        <h3>Kubernetes & Containers</h3>
+        <p>Production container orchestration, auto-scaling, and zero-downtime rollouts.</p>
+        <div class="tech-tags"><span>EKS</span><span>Docker</span><span>RBAC</span><span>HPA</span><span>Helm</span><span>Secrets</span></div>
+      </article>
+
+      <article class="devops-card argon-card">
+        <div class="devops-icon">🚀</div>
+        <h3>CI/CD & GitOps</h3>
+        <p>Automated multibranch build, security scan, and deployment pipelines.</p>
+        <div class="tech-tags"><span>Jenkins</span><span>GitHub Actions</span><span>Argo CD</span><span>CodePipeline</span></div>
+      </article>
+
+      <article class="devops-card argon-card">
+        <div class="devops-icon">🔧</div>
+        <h3>Middleware Engineering</h3>
+        <p>Enterprise JBoss EAP 8 migrations, clustering, JVM tuning, and Tomcat administration.</p>
+        <div class="tech-tags"><span>JBoss EAP 8</span><span>Tomcat</span><span>JVM</span><span>WAR/EAR</span><span>REST APIs</span></div>
+      </article>
+
+      <article class="devops-card argon-card">
+        <div class="devops-icon">📊</div>
+        <h3>Observability & Linux</h3>
+        <p>Full-stack telemetry, log analytics, RCA, and automated Bash health healing.</p>
+        <div class="tech-tags"><span>Prometheus</span><span>Grafana</span><span>ELK</span><span>Splunk</span><span>RHEL Bash</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section id="impact" style="padding-top:10px;">
+    <div class="impact-strip">
+      <div class="impact argon-card"><strong>99.99%</strong><span>Targeted Production Uptime</span></div>
+      <div class="impact argon-card"><strong>30%</strong><span>Reduction in Service Outages</span></div>
+      <div class="impact argon-card"><strong>40%</strong><span>Less Manual Provisioning Effort</span></div>
+      <div class="impact argon-card"><strong>50+</strong><span>Enterprise EC2 & Middleware Nodes</span></div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE (STEP-BY-STEP TRANSPARENT BLACK GLASS + 3D DRAG) -->
+  <section id="experience">
+    <div class="section-title">
+      <div class="eyebrow">03 // Step-by-Step Career Progression</div>
+      <h2>Cloud, DevOps & Middleware Experience</h2>
+      <p>Tata Consultancy Services (TCS) · Feb 2022 – Present · Chennai, Tamil Nadu</p>
+    </div>
+
+    <div class="experience-timeline">
+      <article class="step-item">
+        <div class="step-badge-dot">01</div>
+        <div class="step-transparent-card argon-card">
+          <div class="step-header">
+            <div class="step-title">☁️ Step 01 · AWS Cloud & Infrastructure Engineering</div>
+            <span class="step-pill">50+ EC2 · VPC · RDS · IAM</span>
+          </div>
+          <ul>
+            <li>Manage and support production and non-production AWS environments with a focus on high availability, reliability, security, and operational stability.</li>
+            <li>Administer <strong>50+ EC2 instances</strong>, including provisioning, configuration, OS patching, resizing, performance tuning, and maintenance.</li>
+            <li>Architect and support <strong>VPC, public/private subnets, route tables, Internet Gateway, NAT Gateway, Security Groups, NACLs, EBS, EFS, RDS (Oracle & PostgreSQL), ALB/ELB, and Auto Scaling</strong>.</li>
+            <li>Implement AWS Infrastructure as Code using <strong>Terraform and CloudFormation</strong> alongside strict IAM role and policy governance.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="step-item">
+        <div class="step-badge-dot">02</div>
+        <div class="step-transparent-card argon-card">
+          <div class="step-header">
+            <div class="step-title">🚀 Step 02 · DevOps & CI/CD Pipeline Automation</div>
+            <span class="step-pill">Jenkins · GitHub Actions · Argo CD</span>
+          </div>
+          <ul>
+            <li>Develop and maintain CI/CD workflows using <strong>GitHub, Jenkins Multibranch, AWS CodePipeline, AWS CodeDeploy, and GitHub Actions</strong>.</li>
+            <li>Automate application deployment pipelines across <strong>Development, QA, UAT, SIT, and Production</strong> environments with zero downtime.</li>
+            <li>Automate deployment of <strong>JAR, WAR, and EAR</strong> artifacts to enterprise JBoss EAP and Apache Tomcat servers.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="step-item">
+        <div class="step-badge-dot">03</div>
+        <div class="step-transparent-card argon-card">
+          <div class="step-header">
+            <div class="step-title">☸️ Step 03 · Kubernetes (EKS) & Container Orchestration</div>
+            <span class="step-pill">EKS · Docker · Helm · HPA</span>
+          </div>
+          <ul>
+            <li>Provision and manage <strong>Amazon EKS clusters</strong> using Terraform and administer containerized workloads across Dev, Staging, and Production.</li>
+            <li>Configure <strong>RBAC, ConfigMaps, Secrets, Horizontal Pod Autoscaler (HPA), and Cluster Autoscaler</strong> for resilient microservices.</li>
+            <li>Automate GitOps Kubernetes releases, rollbacks, and post-deployment validation using <strong>Helm Charts and Argo CD</strong>.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="step-item">
+        <div class="step-badge-dot">04</div>
+        <div class="step-transparent-card argon-card">
+          <div class="step-header">
+            <div class="step-title">🔧 Step 04 · Enterprise Middleware (JBoss EAP 8 & Tomcat)</div>
+            <span class="step-pill">JBoss EAP 7.4/8.0 · Tomcat · JVM</span>
+          </div>
+          <ul>
+            <li>Install, configure, upgrade, and administer <strong>JBoss EAP 7.4 / 8.0 and Apache Tomcat</strong> across domain and clustered production environments.</li>
+            <li>Manage JBoss clustering, session replication, load balancing, failover, and high-availability middleware topologies.</li>
+            <li>Troubleshoot JVM heap/thread dumps, datasource pools, SSL/TLS certificates, REST APIs, and API Gateway integrations.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="step-item">
+        <div class="step-badge-dot">05</div>
+        <div class="step-transparent-card argon-card">
+          <div class="step-header">
+            <div class="step-title">⚙️ Step 05 · Observability, Linux & Scripting Automation</div>
+            <span class="step-pill">Bash · Python · Prometheus · ELK</span>
+          </div>
+          <ul>
+            <li>Develop <strong>Bash/Shell and Python</strong> automation scripts for server health checks, filesystem alerts, SSL certificate renewal checks, and log rotation.</li>
+            <li>Build real-time observability dashboards and alerts using <strong>CloudWatch, Prometheus, Grafana, Splunk, and ELK Stack (Elasticsearch, Logstash, Kibana)</strong>.</li>
+            <li>Lead SLA-driven incident management, Root Cause Analysis (RCA), change management, and production release support.</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- KEY ACHIEVEMENTS -->
+  <section id="achievements">
+    <div class="section-title">
+      <div class="eyebrow">04 // Measurable Value</div>
+      <h2>Key Achievements</h2>
+    </div>
+
+    <div class="achievement-grid">
+      <div class="achievement-card argon-card">
+        <div class="achievement-icon"><i class="fas fa-chart-line"></i></div>
+        <h3>Operational Efficiency</h3>
+        <p>Designed and implemented a highly available AWS architecture using EC2, RDS, ALB, and Auto Scaling, achieving <strong>99.99% uptime</strong> and reducing outages by <strong>30%</strong>.</p>
+      </div>
+
+      <div class="achievement-card argon-card">
+        <div class="achievement-icon"><i class="fas fa-rocket"></i></div>
+        <h3>CI/CD Acceleration</h3>
+        <p>Built end-to-end pipelines with <strong>Jenkins Multibranch, GitHub, Docker, Kubernetes, and Argo CD</strong>, enabling <strong>zero-downtime deployments</strong> across all release stages.</p>
+      </div>
+
+      <div class="achievement-card argon-card">
+        <div class="achievement-icon"><i class="fas fa-cogs"></i></div>
+        <h3>Infrastructure Automation</h3>
+        <p>Automated provisioning and middleware configuration using <strong>Terraform, Ansible, and Bash</strong>, cutting manual operational effort by <strong>40%</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS & VISUAL DESIGN (ALL 10 CARDS ON ONE PAGE WITH 3D DRAG + MULTI-PHOTO GALLERY) -->
+  <section id="Design">
+    <div class="section-title">
+      <div class="eyebrow">05 // Creative & Technical Works (All 10 Designs Visible)</div>
+      <h2>Projects & Visual Design</h2>
+      <p>Drag any card in 3D space • <strong>Click any card to open its Multi-Photo Gallery</strong>.</p>
+    </div>
+
+    <div class="projects-full-grid">
+      <!-- Project 1 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="01. Editorial Concept Artwork"
+           data-images='["image/thar.png", "image/24.png", "image/logo 3gh.23.jpg", "image/gpommcnnnnnf.57.jpg"]'>
+        <div class="showcase-img-wrap">
+          <img src="image/thar.png" alt="Editorial Concept Artwork" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 4 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">01. Editorial Concept Artwork</div>
+          <div class="card-sub">Click to view 4 design shots</div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="02. Cinematic Visual Study #24"
+           data-images='["image/24.png", "image/thar.png", "image/gpommcnnnnnf.57.jpg", "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="image/24.png" alt="Cinematic Visual Study #24" onerror="this.src='https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=800&q=80'">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 4 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">02. Cinematic Visual Study #24</div>
+          <div class="card-sub">Click to view 4 design shots</div>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="03. 3D Metallic Brand Emblem"
+           data-images='["image/logo 3gh.23.jpg", "image/24.png", "image/thar.png", "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="image/logo 3gh.23.jpg" alt="3D Metallic Brand Emblem" onerror="this.src='https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=800&q=80'">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 4 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">03. 3D Metallic Brand Emblem</div>
+          <div class="card-sub">Click to view 4 design shots</div>
+        </div>
+      </div>
+
+      <!-- Project 4 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="04. Custom Visual Composition"
+           data-images='["image/gpommcnnnnnf.57.jpg", "image/logo 3gh.23.jpg", "image/24.png", "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="image/gpommcnnnnnf.57.jpg" alt="Custom Visual Composition" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80'">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 4 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">04. Custom Visual Composition</div>
+          <div class="card-sub">Click to view 4 design shots</div>
+        </div>
+      </div>
+
+      <!-- Project 5 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="05. AWS Multi-AZ Cloud Blueprint"
+           data-images='["https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80" alt="AWS High-Availability Architecture">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 3 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">05. AWS Multi-AZ Cloud Blueprint</div>
+          <div class="card-sub">VPC · ALB · EC2 · RDS Topology</div>
+        </div>
+      </div>
+
+      <!-- Project 6 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="06. EKS & Argo CD GitOps Mesh"
+           data-images='["https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80" alt="Kubernetes GitOps Delivery">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 3 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">06. EKS & Argo CD GitOps Mesh</div>
+          <div class="card-sub">Zero-Downtime Container Delivery</div>
+        </div>
+      </div>
+
+      <!-- Project 7 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="07. JBoss EAP 8 Domain Migration"
+           data-images='["https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80" alt="JBoss EAP 8 Migration Architecture">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 3 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">07. JBoss EAP 8 Domain Migration</div>
+          <div class="card-sub">Enterprise Middleware Clustering</div>
+        </div>
+      </div>
+
+      <!-- Project 8 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="08. Metallic Identity & Emblem"
+           data-images='["https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=900&q=80", "image/logo 3gh.23.jpg", "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80" alt="3D Chrome Brand Identity">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 3 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">08. Metallic Identity & Emblem</div>
+          <div class="card-sub">3D Surface & Studio Lighting</div>
+        </div>
+      </div>
+
+      <!-- Project 9 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="09. Retro Editorial Portrait"
+           data-images='["https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=900&q=80", "image/24.png", "image/thar.png"]'>
+        <div class="showcase-img-wrap">
+          <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80" alt="Retro Editorial Portrait">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 3 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">09. Retro Editorial Portrait</div>
+          <div class="card-sub">AI-Assisted Cinematic Styling</div>
+        </div>
+      </div>
+
+      <!-- Project 10 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="10. CloudWatch & Grafana Command"
+           data-images='["https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=900&q=80"]'>
+        <div class="showcase-img-wrap">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Prometheus & Grafana Observability">
+          <span class="multi-photo-badge"><i class="fas fa-images"></i> 3 Photos</span>
+        </div>
+        <div class="card-meta">
+          <div class="card-title">10. CloudWatch & Grafana Command</div>
+          <div class="card-sub">Full-Stack Observability Suite</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS (ALL 4 PHOTO CERTIFICATES ON PURE BLACK • 3D DRAG) -->
+  <section id="cert">
+    <div class="section-title">
+      <div class="eyebrow">06 // Verified Credentials</div>
+      <h2>Certifications</h2>
+      <p>All 4 verified photo certificates on pure black studio cards • Click any certificate to inspect full screen.</p>
+    </div>
+
+    <div class="certs-full-grid">
+      <!-- Cert 1 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="AWS Certified Solutions Architect – Associate"
+           data-images='["image/aws-certified-solutions-architect-associate.png", "https://images.credly.com/size/680x680/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png"]'>
+        <div class="showcase-img-wrap cert-photo-wrap">
+          <img src="image/aws-certified-solutions-architect-associate.png"
+               alt="AWS Certified Solutions Architect Associate"
+               onerror="this.src='https://images.credly.com/size/680x680/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png'">
+        </div>
+        <div class="card-meta">
+          <div class="card-title">AWS Certified Solutions Architect – Associate</div>
+          <div class="card-sub">Issued: October 2025</div>
+        </div>
+      </div>
+
+      <!-- Cert 2 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="AWS Certified Cloud Practitioner"
+           data-images='["image/aws-certified-cloud-practitioner.png", "https://images.credly.com/size/680x680/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png"]'>
+        <div class="showcase-img-wrap cert-photo-wrap">
+          <img src="image/aws-certified-cloud-practitioner.png"
+               alt="AWS Certified Cloud Practitioner"
+               onerror="this.src='https://images.credly.com/size/680x680/images/00634f82-b07f-4bbd-a6bb-53de397fc3a6/image.png'">
+        </div>
+        <div class="card-meta">
+          <div class="card-title">AWS Certified Cloud Practitioner</div>
+          <div class="card-sub">Issued: July 21, 2025</div>
+        </div>
+      </div>
+
+      <!-- Cert 3 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="Oracle Cloud Architect Associate"
+           data-images='["image/Oracle_Associates_Badge__1___1_-removebg-preview.png", "https://brm-workforce.oracle.com/pdf/certview/images/OCI2023CAA.png"]'>
+        <div class="showcase-img-wrap cert-photo-wrap">
+          <img src="image/Oracle_Associates_Badge__1___1_-removebg-preview.png"
+               alt="Oracle Cloud Architect Associate"
+               onerror="this.src='https://brm-workforce.oracle.com/pdf/certview/images/OCI2023CAA.png'">
+        </div>
+        <div class="card-meta">
+          <div class="card-title">Oracle Cloud Architect Associate</div>
+          <div class="card-sub">Issued: October 14, 2025</div>
+        </div>
+      </div>
+
+      <!-- Cert 4 -->
+      <div class="showcase-card argon-card gallery-trigger"
+           data-title="Associate Cloud Engineer Certification"
+           data-images='["image/associate-cloud-engineer-certification.png", "https://images.credly.com/size/680x680/images/08096465-cbfc-4c3e-93e5-93c5aa61f23e/image.png"]'>
+        <div class="showcase-img-wrap cert-photo-wrap">
+          <img src="image/associate-cloud-engineer-certification.png"
+               alt="Associate Cloud Engineer Certification"
+               onerror="this.src='https://images.credly.com/size/680x680/images/08096465-cbfc-4c3e-93e5-93c5aa61f23e/image.png'">
+        </div>
+        <div class="card-meta">
+          <div class="card-title">Associate Cloud Engineer Certification</div>
+          <div class="card-sub">Issued: October 26, 2025</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT (GOOGLE FORM REDIRECT + EMBEDDED FORM) -->
+  <section id="contact">
+    <div class="section-title">
+      <div class="eyebrow">07 // Direct Channel</div>
+      <h2>Get In Touch via Google Form</h2>
+      <p>Click "Launch Google Form" to open the Google Form in a new tab, or submit directly below.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div class="google-form-card argon-card">
+        <div>
+          <div class="argon-badge" style="margin-bottom:14px;"><i class="fab fa-google"></i> GOOGLE FORMS CONNECTED</div>
+          <h3 style="font-size:26px; margin:0 0 12px;">Instant Google Form Portal</h3>
+          <p style="color:var(--muted); line-height:1.7; font-size:14.5px;">
+            Prefer filling out the official Google Form directly? Click below to launch the Google Form in a new window, or reach out via phone or email.
+          </p>
+          <div style="margin-top:22px; display:flex; flex-direction:column; gap:10px; font-size:14px;">
+            <div><i class="fas fa-envelope" style="color:var(--neon-1); width:22px;"></i> mani.can1311@gmail.com</div>
+            <div><i class="fas fa-phone" style="color:var(--neon-1); width:22px;"></i> +91 8300660217</div>
+            <div><i class="fas fa-map-marker-alt" style="color:var(--neon-1); width:22px;"></i> Chennai / Chidambaram, Tamil Nadu</div>
+          </div>
+        </div>
+
+        <div style="margin-top:28px;">
+          <a href="#" id="directGoogleFormLink" target="_blank" rel="noopener" class="btn btn-primary" style="width:100%; justify-content:center;">
+            <i class="fas fa-external-link-alt"></i> Launch Google Form Now
+          </a>
+        </div>
+      </div>
+
+      <form class="contact-wrap argon-card" id="argonContactForm">
+        <h3 style="margin:0 0 6px;">Quick Message (Syncs with Google Form)</h3>
+        <input id="name" name="name" class="input" placeholder="Your Full Name *" required />
+        <input id="email" name="email" type="email" class="input" placeholder="Your Email Address *" required />
+        <input id="subject" name="subject" class="input" placeholder="Subject / Role Opportunity" />
+        <textarea id="message" name="message" class="input" rows="5" placeholder="Your Message *" required></textarea>
+
+        <div style="display:flex; gap:12px; margin-top:6px;">
+          <button type="submit" class="btn btn-primary" style="flex:1; justify-content:center;">
+            <i class="fas fa-paper-plane"></i> Submit & Open Google Form
+          </button>
+          <button type="reset" class="btn btn-ghost" id="resetBtn">Reset</button>
+        </div>
+        <div id="formStatus" style="text-align:center; color:var(--neon-1); font-size:13px; margin-top:6px;"></div>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 Manish Kumar R — Engineered with <strong>Argon 4.11 3D</strong> · AWS Cloud, DevOps & Middleware Portfolio
+  </footer>
+</div>
+
+<!-- MULTI-PHOTO DESIGN & CERTIFICATE GALLERY MODAL -->
+<div class="gallery-modal" id="galleryModal" role="dialog" aria-hidden="true">
+  <div class="gallery-top-bar">
+    <div class="gallery-title-wrap">
+      <h3 id="galleryTitle">Project Showcase</h3>
+      <span id="galleryCounter">Photo 1 of 4</span>
+    </div>
+    <button class="gallery-close-btn" id="galleryClose" title="Close (Esc)">✕</button>
+  </div>
+
+  <div class="gallery-stage">
+    <img id="galleryMainImg" src="" alt="Gallery preview">
+  </div>
+
+  <div class="gallery-thumbs" id="galleryThumbs"></div>
+</div>
+
+<script>
+/* =========================================================================
+   ARGON 4.11 3D CONFIGURATION — GOOGLE FORM & RESUME SETUP
+   ========================================================================= */
+const GOOGLE_FORM_VIEW_URL = "https://docs.google.com/forms/d/e/YOUR_GOOGLE_FORM_ID_HERE/viewform";
+const RESUME_FILE_PATH = "asset/Manish_Kumar.pdf";
+
+gsap.registerPlugin(ScrollTrigger, Draggable);
+
+/* ========== 3D Hover Perspective Tilt + Spotlight Glow on Every Card ========== */
+document.querySelectorAll('.argon-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    if (card.classList.contains('is-dragging')) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+
+    const rotY = ((x / rect.width) - 0.5) * 14;
+    const rotX = ((y / rect.height) - 0.5) * -14;
+
+    gsap.to(card, {
+      rotationY: rotY,
+      rotationX: rotX,
+      scale: 1.015,
+      transformPerspective: 1000,
+      duration: 0.25,
+      ease: "power2.out",
+      overwrite: "auto"
+    });
+  });
+
+  card.addEventListener('mouseleave', () => {
+    if (card.classList.contains('is-dragging')) return;
+    gsap.to(card, {
+      rotationY: 0,
+      rotationX: 0,
+      scale: 1,
+      duration: 0.65,
+      ease: "elastic.out(1, 0.5)",
+      overwrite: "auto"
+    });
+  });
+});
+
+/* ========== UNIVERSAL 3D DRAG PHYSICS ENGINE (ALL AREAS) ========== */
+Draggable.create(".argon-card", {
+  type: "x,y",
+  edgeResistance: 0.65,
+  dragClickables: true,
+  onPress() {
+    this.lastX = this.x;
+    this.lastY = this.y;
+    this.target.dataset.moved = "false";
+    this.target.classList.add('is-dragging');
+
+    gsap.to(this.target, {
+      scale: 1.05,
+      rotationX: 6,
+      rotationY: -6,
+      transformPerspective: 1000,
+      duration: 0.2,
+      ease: "power2.out"
+    });
+  },
+  onDrag() {
+    if (Math.abs(this.x) > 5 || Math.abs(this.y) > 5) {
+      this.target.dataset.moved = "true";
+    }
+    const vx = Math.max(-24, Math.min(24, (this.x - this.lastX) * 1.25));
+    const vy = Math.max(-24, Math.min(24, (this.y - this.lastY) * 1.25));
+    this.lastX = this.x;
+    this.lastY = this.y;
+
+    gsap.to(this.target, {
+      rotationY: vx,
+      rotationX: -vy,
+      rotationZ: vx * 0.2,
+      scale: 1.06,
+      transformPerspective: 1000,
+      duration: 0.12,
+      overwrite: "auto"
+    });
+  },
+  onRelease() {
+    this.target.classList.remove('is-dragging');
+    gsap.to(this.target, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      rotationX: 0,
+      rotationY: 0,
+      rotationZ: 0,
+      duration: 0.85,
+      ease: "elastic.out(1, 0.5)"
+    });
+  }
+});
+
+/* ========== Preloader Animation ========== */
+const progressBar = document.getElementById('progressBar');
+gsap.to(progressBar, {
+  width: "100%",
+  duration: 1.0,
+  ease: "power3.out",
+  onComplete: () => {
+    gsap.to('#preloader', {
+      opacity: 0,
+      duration: 0.45,
+      onComplete() {
+        document.getElementById('preloader').style.display = 'none';
+      }
+    });
+    gsap.from('.hero-left > *', {
+      y: 28,
+      opacity: 0,
+      duration: 0.75,
+      stagger: 0.1,
+      ease: "power3.out"
+    });
+  }
+});
+
+/* ========== Typewriter Role Rotator ========== */
+const roles = [
+  "AWS Certified Solutions Architect – Associate",
+  "Kubernetes (EKS) & Helm Automation",
+  "Enterprise JBoss EAP 8 & Tomcat Specialist",
+  "Terraform, Ansible & GitOps CI/CD Engineer"
+];
+let roleIdx = 0;
+const typedOutput = document.getElementById('typedOutput');
+setInterval(() => {
+  roleIdx = (roleIdx + 1) % roles.length;
+  gsap.to(typedOutput, {
+    opacity: 0,
+    y: -6,
+    duration: 0.25,
+    onComplete: () => {
+      typedOutput.textContent = roles[roleIdx];
+      gsap.to(typedOutput, { opacity: 1, y: 0, duration: 0.35 });
+    }
+  });
+}, 3200);
+
+/* ========== MULTI-PHOTO GALLERY LIGHTBOX ========== */
+const galleryModal = document.getElementById('galleryModal');
+const galleryTitle = document.getElementById('galleryTitle');
+const galleryCounter = document.getElementById('galleryCounter');
+const galleryMainImg = document.getElementById('galleryMainImg');
+const galleryThumbs = document.getElementById('galleryThumbs');
+
+let currentGalleryImages = [];
+let currentGalleryIndex = 0;
+
+function renderGallerySlide(idx) {
+  if (!currentGalleryImages.length) return;
+  currentGalleryIndex = (idx + currentGalleryImages.length) % currentGalleryImages.length;
+  const imgUrl = currentGalleryImages[currentGalleryIndex];
+
+  gsap.fromTo(galleryMainImg,
+    { opacity: 0.2, scale: 0.92, rotationY: -12 },
+    { opacity: 1, scale: 1, rotationY: 0, duration: 0.35, ease: "power2.out" }
+  );
+  galleryMainImg.src = imgUrl;
+  galleryMainImg.onerror = function() {
+    this.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=900&q=80';
+  };
+  galleryCounter.textContent = `Photo ${currentGalleryIndex + 1} of ${currentGalleryImages.length} (Click any thumbnail below to switch)`;
+
+  Array.from(galleryThumbs.children).forEach((thumb, i) => {
+    thumb.classList.toggle('active', i === currentGalleryIndex);
+  });
+}
+
+function openMultiGallery(title, imagesArray) {
+  currentGalleryImages = imagesArray;
+  currentGalleryIndex = 0;
+  galleryTitle.textContent = title;
+  galleryThumbs.innerHTML = '';
+
+  imagesArray.forEach((src, idx) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'gallery-thumb' + (idx === 0 ? ' active' : '');
+    const tImg = document.createElement('img');
+    tImg.src = src;
+    tImg.onerror = function() {
+      this.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80';
+    };
+    thumb.appendChild(tImg);
+    thumb.addEventListener('click', () => renderGallerySlide(idx));
+    galleryThumbs.appendChild(thumb);
+  });
+
+  renderGallerySlide(0);
+  galleryModal.classList.add('open');
+}
+
+document.querySelectorAll('.gallery-trigger').forEach(card => {
+  card.addEventListener('click', () => {
+    if (card.dataset.moved === "true") return;
+    const title = card.getAttribute('data-title') || 'Design Preview';
+    let imgs = [];
+    try {
+      imgs = JSON.parse(card.getAttribute('data-images') || '[]');
+    } catch (err) {
+      imgs = [];
+    }
+    if (imgs.length) openMultiGallery(title, imgs);
+  });
+});
+
+document.getElementById('galleryClose').addEventListener('click', () => galleryModal.classList.remove('open'));
+galleryModal.addEventListener('click', (e) => {
+  if (e.target === galleryModal) galleryModal.classList.remove('open');
+});
+document.addEventListener('keydown', (e) => {
+  if (!galleryModal.classList.contains('open')) return;
+  if (e.key === 'Escape') galleryModal.classList.remove('open');
+  if (e.key === 'ArrowRight') renderGallerySlide(currentGalleryIndex + 1);
+  if (e.key === 'ArrowLeft') renderGallerySlide(currentGalleryIndex - 1);
+});
+
+/* ========== Resume Download ========== */
+document.getElementById('downloadResume').addEventListener('click', () => {
+  const a = document.createElement('a');
+  a.href = RESUME_FILE_PATH;
+  a.download = "Manish_Kumar_R_Resume.pdf";
+  a.click();
+});
+
+/* ========== Google Form Redirect & Contact Integration ========== */
+const openGoogleForm = (prefillParams = "") => {
+  window.open(GOOGLE_FORM_VIEW_URL + prefillParams, '_blank', 'noopener');
+};
+
+document.getElementById('directGoogleFormLink').href = GOOGLE_FORM_VIEW_URL;
+document.getElementById('heroGoogleFormBtn').addEventListener('click', () => openGoogleForm());
+
+document.getElementById('argonContactForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = encodeURIComponent(document.getElementById('name').value.trim());
+  const email = encodeURIComponent(document.getElementById('email').value.trim());
+  const subject = encodeURIComponent(document.getElementById('subject').value.trim());
+  const message = encodeURIComponent(document.getElementById('message').value.trim());
+
+  document.getElementById('formStatus').textContent = "Opening Google Form with your message...";
+  openGoogleForm(`?usp=pp_url&entry.1000001=${name}&entry.1000002=${email}&entry.1000003=${subject}&entry.1000004=${message}`);
+});
+
+/* ========== Theme Toggle ========== */
+const themeToggle = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+const setTheme = (theme) => {
+  if (theme === 'light') {
+    document.documentElement.style.setProperty('--bg', '#f4f7ff');
+    document.documentElement.style.setProperty('--text', '#081024');
+    document.documentElement.style.setProperty('--muted', 'rgba(8, 16, 36, 0.68)');
+    document.documentElement.style.setProperty('--glass-border', 'rgba(8, 16, 36, 0.14)');
+    document.documentElement.style.setProperty('--neon-1', '#0055ff');
+    document.documentElement.style.setProperty('--neon-2', '#9d00ff');
+    themeLabel.innerText = 'Light';
+  } else {
+    document.documentElement.style.setProperty('--bg', '#000000');
+    document.documentElement.style.setProperty('--text', '#f2f6ff');
+    document.documentElement.style.setProperty('--muted', 'rgba(242, 246, 255, 0.66)');
+    document.documentElement.style.setProperty('--glass-border', 'rgba(255, 255, 255, 0.12)');
+    document.documentElement.style.setProperty('--neon-1', '#00f0ff');
+    document.documentElement.style.setProperty('--neon-2', '#ff00e5');
+    themeLabel.innerText = 'Black';
+  }
+  localStorage.setItem('argon_theme', theme);
+};
+setTheme(localStorage.getItem('argon_theme') || 'dark');
+themeToggle.addEventListener('click', () => {
+  const cur = localStorage.getItem('argon_theme') || 'dark';
+  setTheme(cur === 'dark' ? 'light' : 'dark');
+});
+
+/* ========== 3D Scroll Reveal Animations ========== */
+gsap.utils.toArray('section').forEach(sec => {
+  gsap.from(sec, {
+    scrollTrigger: { trigger: sec, start: "top 86%" },
+    y: 40,
+    rotationX: 6,
+    opacity: 0,
+    transformPerspective: 1000,
+    duration: 0.75,
+    ease: "power2.out"
+  });
+});
+</script>
+</body>
+</html>
